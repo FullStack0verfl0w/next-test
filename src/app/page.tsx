@@ -1,10 +1,33 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Person } from "@/Person.type";
 
-export default function Home() {
+export default async function Home() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`);
+  const data: { hello: string } = await res.json();
+
+  const resPeople = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/people`);
+  const people: Person[] = await resPeople.json();
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        <h1>Hello: {data.hello}</h1>
+        <div>
+          <h2>People</h2>
+          <ul>
+            {
+              people.map((p) => (
+                  <li key={p.id}>
+                    <a href={`/person/${p.id}`} className={styles.link}>
+                      <span>{p.name}</span>
+                      <span>{p.race}</span>
+                    </a>
+                  </li>
+              ))
+            }
+          </ul>
+        </div>
         <Image
           className={styles.logo}
           src="/next.svg"
